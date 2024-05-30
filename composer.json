@@ -1,0 +1,20 @@
+{
+    "name": "tuoluojiang/baidubce_appbuilder",
+    "description": "百度千帆AppBuilder",
+    "autoload": {
+        "psr-4": {
+            "Tuoluojiang\\BaidubceAppbuilder\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "周锋",
+            "email": "453850531@qq.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2",
+        "guzzlehttp/guzzle": "^7.8",
+        "psr/log": "^3.0"
+    }
+}
