@@ -75,6 +75,9 @@ class BuilderClient
         }
     }
 
+    /**
+     * 设置日志.
+     */
     private function setLog(string $level, string $message, array $context = []): void
     {
         $this->logger?->{$level}($message, $context);

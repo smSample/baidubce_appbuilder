@@ -20,16 +20,28 @@ class HttpHeader
     {
     }
 
+    /**
+     * 新增头信息.
+     * @param $name
+     * @param $value
+     */
     public function addHeader($name, $value): void
     {
         $this->headers[$name] = $value;
     }
 
+    /**
+     * 获取头信息.
+     */
     public function getHeaders(): array
     {
         return $this->headers;
     }
 
+    /**
+     * 获取单个头信息.
+     * @param $name
+     */
     public function getHeader($name): string
     {
         return $this->headers[$name];

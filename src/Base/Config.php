@@ -22,6 +22,9 @@ class Config
 
     private string $builderUrl = 'https://appbuilder.baidu.com';
 
+    /**
+     * @param string $secretKey
+     */
     public function __construct(protected string $secretKey)
     {
         if (! $secretKey) {
@@ -29,23 +32,25 @@ class Config
         }
     }
 
+    /**
+     * 获取请求地址
+     */
     public function getServiceUrl(string $suffix): string
     {
         return $this->hostUrl . $suffix;
     }
 
+    /**
+     * 获取请求地址
+     */
     public function getBuilderUrl(string $suffix): string
     {
         return $this->builderUrl . $suffix;
     }
 
-    public function getStreamHeader(): HttpHeader
-    {
-        $header = $this->getCommonHeader();
-        $header->addHeader('Content-Type', 'text/event-stream;charset=utf-8');
-        return $header;
-    }
-
+    /**
+     * 获取多媒体请求头.
+     */
     public function getMultipartHeader(): HttpHeader
     {
         $header = $this->getCommonHeader();
@@ -53,11 +58,9 @@ class Config
         return $header;
     }
 
-    public function getAuthHeader(): HttpHeader
-    {
-        return $this->getCommonHeader();
-    }
-
+    /**
+     * 获取公共请求头.
+     */
     public function getCommonHeader(): HttpHeader
     {
         $header = new HttpHeader();
