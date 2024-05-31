@@ -19,7 +19,7 @@ use GuzzleHttp\Psr7\Request;
 use Psr\Log\LoggerInterface;
 use Tuoluojiang\BaidubceAppbuilder\Exception\BaiduBceException;
 
-class BaiduClient
+class BuilderClient
 {
     private Client $client;
 
@@ -38,17 +38,9 @@ class BaiduClient
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
-    public function request(string $path, string $body = '', string $method = 'POST', bool $stream = false, bool $isUpload = false)
+    public function request(string $path, string $body = '', string $method = 'POST')
     {
-        if ($stream) {
-            $headers = $this->config->getStreamHeader()->getHeaders();
-        } else {
-            $headers = $this->config->getCommonHeader()->getHeaders();
-        }
-        if ($isUpload) {
-            $headers = $this->config->getMultipartHeader()->getHeaders();
-        }
-        $request = new Request($method, $this->config->getServiceUrl($path), $headers, $body);
+        $request = new Request($method, $this->config->getBuilderUrl($path), $this->config->getCommonHeader()->getHeaders(), $body);
         try {
             $response = $this->client->send($request);
             $response = json_decode($response->getBody()->getContents(), true);

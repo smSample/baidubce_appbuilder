@@ -24,13 +24,15 @@ class Conversation extends BaiduClient
 {
     protected const CONVER_PATH = '/v2/app/conversation/runs';
 
+    protected const UPLOAD_PATH = '/v2/app/conversation/file/upload';
+
     protected const INITIATE_PATH = '/v2/app/conversation';
 
     public function __construct(protected string $apiKey, protected string $appId)
     {
         parent::__construct($apiKey);
         if (! $this->appId) {
-            throw new BaiduBceException('appId is null',500);
+            throw new BaiduBceException('appId is null', 500);
         }
     }
 
@@ -49,7 +51,21 @@ class Conversation extends BaiduClient
             $conversation_id = $this->conversationId();
         }
         $app_id = $this->appId;
-        return $this->request(self::CONVER_PATH, json_encode(compact('app_id', 'query', 'stream', 'conversation_id', 'fileIds')),stream: $stream);
+        return $this->request(self::CONVER_PATH, json_encode(compact('app_id', 'query', 'stream', 'conversation_id', 'fileIds')), stream: $stream);
+    }
+
+    /**
+     * 该接口用于在对话中上传文件供大模型处理，文件的有效期为7天并且不超过对话的有效期。一次只能上传一个文件。
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return mixed
+     */
+    public function upload(string $file, string $conversation_id = '')
+    {
+        if (! $conversation_id) {
+            $conversation_id = $this->conversationId();
+        }
+        $app_id = $this->appId;
+        return $this->request(self::UPLOAD_PATH, json_encode(compact('app_id', 'file', 'conversation_id')), isUpload: true);
     }
 
     /**

@@ -20,6 +20,8 @@ class Config
 {
     private string $hostUrl = 'https://qianfan.baidubce.com';
 
+    private string $builderUrl = 'https://appbuilder.baidu.com';
+
     public function __construct(protected string $secretKey)
     {
         if (! $secretKey) {
@@ -30,6 +32,11 @@ class Config
     public function getServiceUrl(string $suffix): string
     {
         return $this->hostUrl . $suffix;
+    }
+
+    public function getBuilderUrl(string $suffix): string
+    {
+        return $this->builderUrl . $suffix;
     }
 
     public function getStreamHeader(): HttpHeader
