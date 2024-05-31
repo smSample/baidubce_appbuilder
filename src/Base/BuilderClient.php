@@ -38,7 +38,7 @@ class BuilderClient
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
-    public function request(string $path, string $body = '', string $method = 'POST')
+    public function request(string $path, string $body = '',string $query = '', string $method = 'POST')
     {
         $request = new Request($method, $this->config->getBuilderUrl($path), $this->config->getCommonHeader()->getHeaders(), $body);
         try {
