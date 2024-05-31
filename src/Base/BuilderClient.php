@@ -38,9 +38,17 @@ class BuilderClient
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
-    public function request(string $path, string $body = '',string $query = '', string $method = 'POST')
+    public function request(string $path, string $body = '', array $query = [], string $method = 'POST', bool $isMultipart = false)
     {
-        $request = new Request($method, $this->config->getBuilderUrl($path), $this->config->getCommonHeader()->getHeaders(), $body);
+        if ($query) {
+            $path .= '?' . http_build_query($query);
+        }
+        if ($isMultipart) {
+            $headers = $this->config->getMultipartHeader()->getHeaders();
+        } else {
+            $headers = $this->config->getCommonHeader()->getHeaders();
+        }
+        $request = new Request($method, $this->config->getBuilderUrl($path), $headers, $body);
         try {
             $response = $this->client->send($request);
             $response = json_decode($response->getBody()->getContents(), true);
