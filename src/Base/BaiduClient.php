@@ -29,7 +29,7 @@ class BaiduClient
 
     public function __construct(protected string $apiKey, protected ?LoggerInterface $logger = null)
     {
-        $this->client = new Client(['verify' => $this->verify, 'timeout' => 10]);
+        $this->client = new Client(['verify' => $this->verify, 'timeout' => 30]);
         $this->config = new Config($apiKey);
     }
 
@@ -38,27 +38,20 @@ class BaiduClient
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @return mixed
      */
-    public function request(string $path, string $body = '', string $method = 'POST', bool $stream = false, bool $isUpload = false)
+    public function request(string $path, string $body = '', string $method = 'POST', bool $isUpload = false)
     {
-        if ($stream) {
-            $headers = $this->config->getStreamHeader()->getHeaders();
-        } else {
-            $headers = $this->config->getCommonHeader()->getHeaders();
-        }
+        $headers = $this->config->getCommonHeader()->getHeaders();
         if ($isUpload) {
             $headers = $this->config->getMultipartHeader()->getHeaders();
         }
-        $request = new Request($method, $this->config->getServiceUrl($path), $headers, $body);
         try {
+            $request  = new Request($method, $this->config->getServiceUrl($path), $headers, $body);
             $response = $this->client->send($request);
-            $response = json_decode($response->getBody()->getContents(), true);
-            if (! $response) {
-                throw new BaiduBceException('无响应', 500);
-            }
             if ($response->getStatusCode() !== 200) {
                 throw new BaiduBceException($response['message'], $response->getStatusCode());
             }
-            $this->logger->info('BaidubceAppbuilder Info：', [
+            $response = json_decode($response->getBody()->getContents(), true);
+            $this->setLog('info', 'BaidubceAppbuilder Info：', [
                 'path'     => $path,
                 'body'     => $body,
                 'method'   => $method,
@@ -66,12 +59,17 @@ class BaiduClient
             ]);
             return $response;
         } catch (\Exception $e) {
-            $this->logger->error('BaidubceAppbuilder Error：' . $e->getMessage(), [
+            $this->setLog('error', 'BaidubceAppbuilder Error：' . $e->getMessage(), [
                 'file'  => $e->getFile(),
                 'line'  => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
             ]);
             throw new BaiduBceException($e->getMessage());
         }
+    }
+
+    private function setLog(string $level, string $message, array $context = []): void
+    {
+        $this->logger?->{$level}($message, $context);
     }
 }

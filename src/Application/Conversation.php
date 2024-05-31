@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Tuoluojiang\BaidubceAppbuilder\Application;
 
+use Psr\Log\LoggerInterface;
 use Tuoluojiang\BaidubceAppbuilder\Base\BaiduClient;
 use Tuoluojiang\BaidubceAppbuilder\Exception\BaiduBceException;
 
@@ -28,9 +29,9 @@ class Conversation extends BaiduClient
 
     protected const INITIATE_PATH = '/v2/app/conversation';
 
-    public function __construct(protected string $apiKey, protected string $appId)
+    public function __construct(protected string $apiKey, protected string $appId, LoggerInterface $logger = null)
     {
-        parent::__construct($apiKey);
+        parent::__construct($apiKey, $logger);
         if (! $this->appId) {
             throw new BaiduBceException('appId is null', 500);
         }
@@ -51,7 +52,7 @@ class Conversation extends BaiduClient
             $conversation_id = $this->conversationId();
         }
         $app_id = $this->appId;
-        return $this->request(self::CONVER_PATH, json_encode(compact('app_id', 'query', 'stream', 'conversation_id', 'fileIds')), stream: $stream);
+        return $this->request(self::CONVER_PATH, json_encode(compact('app_id', 'query', 'stream', 'conversation_id', 'fileIds')));
     }
 
     /**
@@ -75,7 +76,7 @@ class Conversation extends BaiduClient
      */
     protected function conversationId()
     {
-        $response = $this->request(self::INITIATE_PATH, json_encode(['appid' => $this->appId]));
+        $response = $this->request(self::INITIATE_PATH, json_encode(['app_id' => $this->appId]));
         return $response['conversation_id'];
     }
 }

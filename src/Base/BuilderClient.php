@@ -58,7 +58,7 @@ class BuilderClient
             if ($response->getStatusCode() !== 200) {
                 throw new BaiduBceException($response['message'], $response->getStatusCode());
             }
-            $this->logger->info('BaidubceAppbuilder Info：', [
+            $this->setLog('info', 'BaidubceAppbuilder Info：', [
                 'path'     => $path,
                 'body'     => $body,
                 'method'   => $method,
@@ -66,12 +66,17 @@ class BuilderClient
             ]);
             return $response;
         } catch (\Exception $e) {
-            $this->logger->error('BaidubceAppbuilder Error：' . $e->getMessage(), [
+            $this->setLog('error', 'BaidubceAppbuilder Error：' . $e->getMessage(), [
                 'file'  => $e->getFile(),
                 'line'  => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
             ]);
             throw new BaiduBceException($e->getMessage());
         }
+    }
+
+    private function setLog(string $level, string $message, array $context = []): void
+    {
+        $this->logger?->{$level}($message, $context);
     }
 }
